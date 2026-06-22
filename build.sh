@@ -68,9 +68,16 @@ else
     echo "==> No .icon document found in project, skipping icon."
 fi
 
-echo "==> Ad-hoc signing…"
-# Stable ad-hoc identity so Accessibility permission sticks across launches.
-codesign --force --deep --sign - "$APP"
+# Prefer a stable self-signed identity (see setup-cert.sh) so TCC permissions
+# like Accessibility persist across rebuilds. Fall back to ad-hoc if absent.
+CERT_NAME="TitleCase Self-Signed"
+if security find-identity -p codesigning 2>/dev/null | grep -q "$CERT_NAME"; then
+    echo "==> Signing with '$CERT_NAME'…"
+    codesign --force --deep --sign "$CERT_NAME" "$APP"
+else
+    echo "==> No self-signed identity found (run ./setup-cert.sh); using ad-hoc…"
+    codesign --force --deep --sign - "$APP"
+fi
 
 echo "==> Installed: $APP"
 echo "    Launch with:  open \"$APP\""

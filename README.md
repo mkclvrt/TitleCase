@@ -10,13 +10,31 @@ no web calls — just compiled Swift + AppKit.
 - `tests/main.swift` — assertions for the engine.
 - `TitleCase.icon` — app icon (Icon Composer document); any `*.icon` here is compiled
   into the bundle by `build.sh` via `actool`.
-- `build.sh` — compiles, bundles, adds the icon, ad-hoc signs, installs to `~/Applications`.
+- `build.sh` — compiles, bundles, adds the icon, code-signs, installs to `~/Applications`.
+- `setup-cert.sh` — one-time, per-machine: creates a stable self-signed signing
+  identity so Accessibility permission survives rebuilds (see below).
 
 ## Build / reinstall
 ```sh
 ./build.sh
 open ~/Applications/TitleCase.app
 ```
+
+## Persistent in-place mode (Accessibility permission)
+The "Replace selection in place" feature sends synthetic ⌘C/⌘V keystrokes, which
+needs **Accessibility** permission. macOS ties that permission to the app's signing
+identity, and an ad-hoc signature changes on every rebuild — so the grant would be
+revoked each time you run `build.sh`.
+
+To make it stick, create a stable self-signed certificate once:
+```sh
+./setup-cert.sh     # run once per machine; no secrets are stored in the repo
+./build.sh          # from now on, builds are signed with that identity
+```
+Then grant the permission once: menu → *Replace selection in place* → **Open System
+Settings** → enable **TitleCase** under Privacy & Security → Accessibility → click the
+menu item again so it shows a ✓. Future rebuilds keep the grant. (Clipboard mode never
+needs this.) If `setup-cert.sh` hasn't been run, `build.sh` falls back to ad-hoc signing.
 
 ## Run the tests
 ```sh
