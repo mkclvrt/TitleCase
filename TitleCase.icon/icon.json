@@ -26,7 +26,7 @@
         {
           "blend-mode" : "normal",
           "fill" : {
-            "solid" : "display-p3:0.52413,0.14092,1.00000,1.00000"
+            "solid" : "display-p3:0.64301,0.68477,0.68464,1.00000"
           },
           "image-name" : "text.svg",
           "name" : "text",
