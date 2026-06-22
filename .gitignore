@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+
+# Build output (the app installs to ~/Applications; nothing builds in-tree)
+build/
+*.app
+DerivedData/
